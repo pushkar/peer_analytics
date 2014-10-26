@@ -52,3 +52,15 @@ docs/_build/
 
 # PyBuilder
 target/
+
+#OS BS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+#Eclipse BS
+

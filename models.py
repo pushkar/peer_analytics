@@ -90,3 +90,6 @@ class Logs:
                 if rand[0] > 0.5:
                     tf = True
                 self.add_log(j, i, tf)
+                
+    def test(self):
+        print "This is a test"
