@@ -91,5 +91,3 @@ class Logs:
                     tf = True
                 self.add_log(j, i, tf)
                 
-    def test(self):
-        print "This is a test"
