@@ -50,7 +50,7 @@ class Logs:
     def get_log_byid(self, student_id, question_id):
         for i in range(0, len(self.log)):
             if self.log[i].student_id == student_id and self.log[i].question_id == question_id:
-                return self.log[i]
+                return i
         return -1
 
     def show(self, print_answer_score=False, print_student_score=False):
@@ -90,4 +90,3 @@ class Logs:
                 if rand[0] > 0.5:
                     tf = True
                 self.add_log(j, i, tf)
-                
