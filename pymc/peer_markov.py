@@ -4,6 +4,7 @@ from pymc.Matplot import plot
 from pylab import *
 from pprint import *
 
+np.set_printoptions(precision=2)
 
 # Number of students and submissions
 n = 5
@@ -14,7 +15,7 @@ def plot_artificial_dataset(n):
     true_score = np.r_[pm.rdiscrete_uniform(0, 5, n)]
     for i in range(0, n):
         for j in range(0, n):
-            data[i, j] = pm.rnormal(true_score[i], 10) #1./reliability[j])
+            data[i, j] = int(pm.rnormal(true_score[i], 10)) #1./reliability[j])
 
     # print "Reliability scores:"
     # print reliability
@@ -38,7 +39,7 @@ for i in range(0, n):
     r[i] = pm.Gamma('r_%i' % i, 1, 0.01)
     s[i] = pm.Normal('s_%i' % i, 0, 0.1)
     for j in range(0, n):
-        o[i*n+j] = pm.Normal('o_%i%i' % (i, j), s[j], 1./r[i], value=data[:, j], observed=True)
+        o[i*n+j] = pm.Normal('o_%i%i' % (i, j), s[j], 1./r[i], value=data[j, :], observed=True)
 
 model = pm.Model(np.r_[r, s, o])
 mcmc = pm.MCMC(model)
@@ -53,7 +54,7 @@ for i in range(0, n):
 
     ax = plt.subplot(311)
     plt.xlim(0, 5.)
-    plt.hist(data, bins=25, histtype="stepfilled", normed=True, label="observed")
+    plt.hist(data[i, :], bins=n, histtype="stepfilled", normed=True, label="observed")
     plt.legend()
 
     ax = plt.subplot(312)
