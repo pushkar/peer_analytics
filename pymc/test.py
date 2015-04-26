@@ -5,17 +5,24 @@ from pylab import *
 from pprint import *
 
 n = 100
+n_out = 10
 s_true = 2.5
 
-data = np.r_[pm.rnormal(s_true, 0.1, n)]
+data = np.r_[pm.rnormal(s_true, 10, n)]
 print data
 
 # reliability, true scores and observed scores
-r = pm.Gamma("r", 1, 0.01)
-s = pm.Normal("s", 0, 0.1)
-o = pm.Normal("o", s, 1./r, value=data, observed=True)
+r = np.empty(1, dtype=object)
+s = np.empty(1, dtype=object)
+o = np.empty(n_out, dtype=object)
 
-model = pm.Model([r, s, o])
+r[0] = pm.Gamma("r", 1, 0.01)
+s[0] = pm.Normal("s", 0, 0.1)
+
+for i in range(0, n_out):
+    o[i] = pm.Normal('o_%i' % i, s, 1./r, value=data, observed=True)
+
+model = pm.Model(np.r_[r, s, o])
 mcmc = pm.MCMC(model)
 mcmc.sample(12000, 2000, 2)
 
