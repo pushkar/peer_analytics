@@ -8,8 +8,8 @@ import scipy.stats as stats
 colors = ["#348ABD", "#A60628"]
 np.set_printoptions(precision=2)
 
-n_students = 5
-n_questions = 5
+n_students = 20
+n_questions = 10
 
 def gen_artificial_dataset(n_s, n_q):
     x = np.arange(0, n_q, 1)
@@ -34,11 +34,11 @@ print "Question Proficiency is " + str(q_scores)
 
 s = np.empty(n_students, dtype=object)
 for i in range(0, n_students):
-    s[i] = pm.Normal('s_%i'%i, mu=0., tau=1.)
+    s[i] = pm.Normal('s_%i'%i, mu=0.1, tau=1.)
 
 q = np.empty(n_questions, dtype=object)
 for i in range(0, n_questions):
-    q[i] = pm.Normal('q_%i'%i, mu=0., tau=1.)
+    q[i] = pm.Normal('q_%i'%i, mu=0.1, tau=1.)
 
 @pm.potential
 def p(data=data, s=s, q=q):
@@ -62,14 +62,17 @@ model = pm.Model(np.r_[s, q], p)
 map_ = pm.MAP(model)
 map_.fit()
 mcmc = pm.MCMC(model)
-mcmc.sample(50000, 18000)
+mcmc.sample(20000, 18000)
+M = pm.MCMC(model, db='pickle', dbname='irt.pickle')
+M.db
+M.db.close()
 
 print "Student Proficiency:"
 for i in range(0, n_students):
     print mcmc.stats()["s_%i"%i]["mean"]
 
 print "Question Hardness:"
-for i in range(0, n_students):
+for i in range(0, n_questions):
     print mcmc.stats()["q_%i"%i]["mean"]
 
 data_n = np.zeros(shape=(n_students, n_questions), dtype=int)
@@ -79,4 +82,6 @@ for si in range(0, n_students):
             data_n[si, qi] = 1
 print data
 print data_n
-print logical_xor(data, data_n)
+data_x = logical_xor(data, data_n)
+print data_x
+print np.sum(data_x)
